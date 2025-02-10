@@ -67,6 +67,33 @@ cmake ../qperf
 make
 ```
 
+## RTT Debugging
+Add compile time flag `RTT_DEBUG` in CMakeLists.txt and build qperf again:
+```diff
+-target_compile_definitions(qperf PRIVATE QPERF_VERSION="${PROJECT_VERSION}")
++target_compile_definitions(qperf PRIVATE QPERF_VERSION="${PROJECT_VERSION}" RTT_DEBUG)
+```
+
+```bash
+./qperf -s
+starting server with pid 47730, port 18080, cc reno, iw 10
+got new connection
+request received, sending data
+connection 0 second 0 send window: 174102511 packets sent: 147077 packets lost: 0 rtt (m|s|v|l): 1|27|0|27 ms
+connection 0 second 1 send window: 251570068 packets sent: 307966 packets lost: 479 rtt (m|s|v|l): 1|27|1|28 ms
+```
+
+> RTT logs follow the format:
+> ```bash
+> rtt (m|s|v|l)
+> ```
+> Where:
+>
+> 1. `m`: Minimum RTT (in ms)
+> 2. `s`: Smoothed RTT (in ms)
+> 3. `v`: RTT Variance (in ms)
+> 4. `l`: Latest RTT (in ms)
+
 # TLS
 QUIC requires TLS, so qperf requires TLS certificates when running in server mode. It will look for a "server.crt" and "server.key" file in the current working directory.
 

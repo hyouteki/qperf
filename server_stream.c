@@ -30,7 +30,17 @@ static void print_report(server_stream *s)
     s->report_num_packets_lost = stats.num_packets.lost - s->total_num_packets_lost;
     s->total_num_packets_sent = stats.num_packets.sent;
     s->total_num_packets_lost = stats.num_packets.lost;
+#ifdef RTT_DEBUG
+    printf("connection %i second %i send window: %" PRIu32 " "
+           "packets sent: %" PRIu64 " packets lost: %" PRIu64 " "
+           "rtt (m|s|v|l): %u|%u|%u|%u ms\n",
+           s->report_id, s->report_second, stats.cc.cwnd,
+           s->report_num_packets_sent, s->report_num_packets_lost,
+           stats.rtt.minimum, stats.rtt.smoothed, stats.rtt.variance,
+           stats.rtt.latest);
+#else
     printf("connection %i second %i send window: %"PRIu32" packets sent: %"PRIu64" packets lost: %"PRIu64"\n", s->report_id, s->report_second, stats.cc.cwnd, s->report_num_packets_sent, s->report_num_packets_lost);
+#endif
     fflush(stdout);
     ++s->report_second;
 }
